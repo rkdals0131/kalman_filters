@@ -1,5 +1,5 @@
 #pragma once
-#include <system_model.hpp>
+#include "system_model.hpp"
 
 class SystemModelA : public SystemModel {
 
@@ -73,11 +73,9 @@ public:
 
   virtual Eigen::MatrixXd JacobObservationModel(const Eigen::VectorXd &x) {
 
-    Eigen::MatrixXd jH(4, 2);
-    jH << 1.0, 0.0, 
-          0.0, 1.0,
-          0.0, 0.0, 
-          0.0, 0.0;
+    Eigen::MatrixXd jH(2, 4);
+    jH << 1.0, 0.0, 0.0, 0.0,
+          0.0, 1.0, 0.0, 0.0;
 
     return jH;
   }

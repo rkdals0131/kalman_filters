@@ -1,10 +1,11 @@
-#include <stdafx.hpp>
-#include <ekf.hpp>
+#include "stdafx.hpp"
+#include "ekf.hpp"
 
 ExtendedKF::ExtendedKF(std::shared_ptr<SystemModel> _model, const Eigen::MatrixXd& _P)
 : model(_model)
+, P(_P)
 , P0(_P)
-, x_hat(P.rows())
+, x_hat(_P.rows())
 {
 }
 
@@ -35,9 +36,9 @@ void ExtendedKF::predict(const Eigen::VectorXd& u) {
 void ExtendedKF::update(const Eigen::VectorXd& y) {
 
   Eigen::MatrixXd C_ = model->JacobObservationModel(x_hat);
-  K = (P * C_) * (C_.transpose() * P * C_ + model->R).inverse();
+  K = P * C_.transpose() * (C_ * P * C_.transpose() + model->R).inverse();
   x_hat += K * (y - model->ObservationModel(x_hat));
-  P = (I - K * C_.transpose()) * P;
+  P = (I - K * C_) * P;
 }
 
 Eigen::VectorXd ExtendedKF::get_state() { 
